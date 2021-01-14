@@ -7,7 +7,7 @@ with open('README.rst', 'rb') as f:
 
 long_description = ld.replace(ld[0:ld.find('nece?')], '')
 
-version = '0.9'
+version = '0.10.dev0'
 description = "A content translation framework using Postgresql's jsonb" + \
     " field in the background"
 url = 'https://github.com/polyconseil/django-nece'
