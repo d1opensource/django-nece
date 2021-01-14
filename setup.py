@@ -34,6 +34,7 @@ setup(
     extras_require={
         'psycopg2':  ['psycopg2>=2.8.1'],
         'psycopg2-binary': ['psycopg2-binary>=2.8.1'],
+        'admin': ['django-admin-json-editor'],
     },
     license='BSD License',
     classifiers=[
