@@ -1,20 +1,18 @@
-.. image:: https://img.shields.io/travis/tatterdemalion/django-nece/master.svg
-    :target: https://travis-ci.org/tatterdemalion/django-nece
+.. image:: https://img.shields.io/pypi/v/django-nece.svg
+    :target: https://pypi.python.org/pypi/django-nece
 
-.. image:: https://img.shields.io/coveralls/tatterdemalion/django-nece.svg
-    :target: https://coveralls.io/r/tatterdemalion/django-nece
-
-.. image:: https://img.shields.io/pypi/v/nece.svg
-    :target: https://pypi.python.org/pypi/nece
-
-.. image:: https://img.shields.io/pypi/pyversions/nece.svg
-    :target: https://pypi.python.org/pypi/nece/
+.. image:: https://img.shields.io/pypi/pyversions/django-nece.svg
+    :target: https://pypi.python.org/pypi/django-nece/
 
 
 IMPORTANT NOTICE
-=====
+================
 
-This repository is not maintained anymore. Please feel free to fork. If you are interested, I will be happy to transfer the ownership and help with the ecosystem (travis, pip etc...) as much as I can.
+This is a fork of https://github.com/tatterdemalion/django-nece which is not maintained anymore.
+
+The package name has been changed from ``nece`` to ``django-nece``.
+
+
 
 
 nece?
@@ -23,7 +21,7 @@ nece?
 Introduction
 ------------
 
-.. figure:: https://raw.githubusercontent.com/tatterdemalion/django-nece/master/images/nece.png
+.. figure:: https://raw.githubusercontent.com/polyconseil/django-nece/master/images/nece.png
    :alt: nece
 
 A “Content Translation Framework” using Postgresql’s jsonb field. It
@@ -70,14 +68,7 @@ via pypi:
 
 ::
 
-    pip install nece
-
-via setup.py
-~~~~~~~~~~~~
-
-::
-
-    python setup.py install
+    pip install django-nece
 
 Usage
 -----
@@ -202,7 +193,7 @@ Admin panel
 --------
 Use `TranslatableModelAdmin` for pretty JSON editor (powered by `django-admin-json-editor`_).
 
-.. figure:: https://raw.githubusercontent.com/tatterdemalion/django-nece/master/images/admin.png
+.. figure:: https://raw.githubusercontent.com/polyconseil/django-nece/master/images/admin.png
    :alt: nece
 
 Example:
@@ -246,6 +237,6 @@ Contributors & Thanks
 .. _Mathieu Richardoz: https://github.com/metamatik
 .. _Marc Hertzog: https://github.com/kemar
 .. _Alexey Kotenko: https://github.com/k0t3n
-.. _Change Log: https://github.com/tatterdemalion/django-nece/blob/master/CHANGELOG.md
+.. _Change Log: https://github.com/polyconseil/django-nece/blob/master/CHANGELOG.md
 .. _django-admin-json-editor: https://github.com/abogushov/django-admin-json-editor
 

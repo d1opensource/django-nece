@@ -7,20 +7,22 @@ with open('README.rst', 'rb') as f:
 
 long_description = ld.replace(ld[0:ld.find('nece?')], '')
 
-version = '0.8.2'
+version = '0.9'
 description = "A content translation framework using Postgresql's jsonb" + \
     " field in the background"
-url = 'https://github.com/tatterdemalion/django-nece'
+url = 'https://github.com/polyconseil/django-nece'
 download_url = '/'.join([url, 'tarball', version])
 
 setup(
-    name='nece',
+    name='django-nece',
     version=version,
     description=description,
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Can Mustafa Özdemir',
     author_email='canmustafaozdemir@gmail.com',
+    maintainer="Polyconseil",
+    maintainer_email="opensource+django-nece@polyconseil.fr",
     url=url,
     download_url=download_url,
     keywords=['translations', 'i18n', 'language', 'multilingual'],
@@ -45,6 +47,7 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Topic :: Database",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
         "Topic :: Text Processing :: Linguistic",
