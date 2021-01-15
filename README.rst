@@ -56,7 +56,7 @@ Dependencies
 ::
 
     postgresql >= 9.4.5
-    Django >= 1.9
+    Django >= 2.2
     psycopg2 >= 2.5.4
 
 
