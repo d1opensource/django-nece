@@ -1,8 +1,18 @@
 Changelog for django-nece
 =========================
 
-0.9.0
------
+0.10.0 (unreleased)
+-------------------
+
+- Add ``admin`` extra to automatically install ``django-admin-json-editor``
+
+*Note:*
+
+    * Python 2.7, 3.4 & 3.5 support will be dropped in next minor version.
+    * Django 1.9, 1.10, 1.11, 2.0 & 2.1 support will be dropped in next minor version.
+
+0.9.0 (2021-01-14)
+------------------
 
 - Changed name from ``nece`` to ``django-nece``
 
