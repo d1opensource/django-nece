@@ -1,5 +1,4 @@
 django-admin-json-editor==0.2.0
-six
 psycopg2
 dj-database-url
 coveralls
