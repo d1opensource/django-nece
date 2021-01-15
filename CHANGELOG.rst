@@ -6,6 +6,7 @@ Changelog for django-nece
 
 - Drop support of Python 2.7, 3.4 & 3.5
 - Drop support of Django 1.9, 1.10, 1.11, 2.0 & 2.1
+- Add support for Django 3.1
 
 
 0.10 (2021-01-15)
