@@ -1,8 +1,8 @@
 Changelog for django-nece
 =========================
 
-0.10.0 (unreleased)
--------------------
+0.10 (2021-01-15)
+-----------------
 
 - Add ``admin`` extra to automatically install ``django-admin-json-editor``
 
