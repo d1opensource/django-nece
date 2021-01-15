@@ -184,13 +184,15 @@ Fallback language would be used if a translation is missing.
 Example:
 
 ::
+
     TRANSLATIONS_FALLBACK = {
         'fr_ca': ['fr_fr'],
         'en_us': ['en_gb'],
     }
 
 Admin panel
---------
+-----------
+
 Use `TranslatableModelAdmin` for pretty JSON editor (powered by `django-admin-json-editor`_).
 
 .. figure:: https://raw.githubusercontent.com/polyconseil/django-nece/master/images/admin.png
