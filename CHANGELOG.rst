@@ -1,6 +1,12 @@
 Changelog for django-nece
 =========================
 
+0.12 (unreleased)
+-----------------
+
+- Nothing changed yet.
+
+
 0.11 (2021-05-10)
 -----------------
 
