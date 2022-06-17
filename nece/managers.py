@@ -4,12 +4,15 @@ from django.db import models
 from django.db.models.expressions import RawSQL
 from django.db.models.query import ModelIterable
 
-
-TRANSLATIONS_DEFAULT = getattr(settings, 'TRANSLATIONS_DEFAULT', 'en_us')
-TRANSLATIONS_MAP = getattr(settings, 'TRANSLATIONS_MAP', {'en': 'en_us'})
-TRANSLATIONS_FALLBACK = getattr(settings, 'TRANSLATIONS_FALLBACK', {})  # TODO: check it's a list
+TRANSLATIONS_DEFAULT = getattr(settings, "TRANSLATIONS_DEFAULT", "en_us")
+TRANSLATIONS_MAP = getattr(settings, "TRANSLATIONS_MAP", {"en": "en_us"})
+TRANSLATIONS_FALLBACK = getattr(
+    settings, "TRANSLATIONS_FALLBACK", {}
+)
 if any(not isinstance(val, list) for val in TRANSLATIONS_FALLBACK.values()):
-    raise ImproperlyConfigured("TRANSLATIONS_FALLBACK should be a dict of str and list, e.g., {'en_gb': ['en_us']}).")
+    raise ImproperlyConfigured(
+        "TRANSLATIONS_FALLBACK should be a dict of str and list, e.g., {'en_gb': ['en_us']})."
+    )
 
 
 class TranslationMixin(object):
@@ -80,14 +83,16 @@ class TranslationQuerySet(models.QuerySet, TranslationMixin):
     def filter(self, *args, **kwargs):
         if not self.is_default_language(self._language_code):
             for key, value in list(kwargs.items()):
-                if key.split('__')[0] in self.model._meta.translatable_fields:
+                if key.split("__")[0] in self.model._meta.translatable_fields:
                     del kwargs[key]
-                    key = 'translations__{}__{}'.format(
-                        self._language_code, key)
+                    key = f"translations__{self._language_code}__{key}"
+                    if "contains" in key and "icontains" not in key:
+                        # horrible hack but contains by itself bring none results.
+                        key = key.replace("contains", "icontains")
                     kwargs[key] = value
         return super(TranslationQuerySet, self).filter(*args, **kwargs)
 
-    def order_by_json_path(self, json_path, language_code=None, order='asc'):
+    def order_by_json_path(self, json_path, language_code=None, order="asc"):
         """
         Orders a queryset by the value of the specified `json_path`.
 
@@ -100,13 +105,13 @@ class TranslationQuerySet(models.QuerySet, TranslationMixin):
         Usage example:
             MyModel.objects.language('en_us').filter(is_active=True).order_by_json_path('title')
         """
-        language_code = (language_code
-                            or self._language_code
-                            or self.get_language_key(language_code))
-        json_path = '{%s,%s}' % (language_code, json_path)
+        language_code = (
+            language_code or self._language_code or self.get_language_key(language_code)
+        )
+        json_path = f"{{{language_code},{json_path}}}"
         # Our jsonb field is named `translations`.
         raw_sql_expression = RawSQL("translations#>>%s", (json_path,))
-        if order == 'desc':
+        if order == "desc":
             raw_sql_expression = raw_sql_expression.desc()
         return self.order_by(raw_sql_expression)
 
@@ -116,20 +121,21 @@ class TranslationManager(models.Manager, TranslationMixin):
 
     def get_queryset(self, language_code=None):
         qs = self._queryset_class(self.model, using=self.db, hints=self._hints)
-        language_code = self.get_language_key(language_code or self._default_language_code)
+        language_code = self.get_language_key(
+            language_code or self._default_language_code
+        )
         qs.language(language_code)
         return qs
 
     def language_or_default(self, language_code):
         language_code = self.get_language_key(language_code)
-        return self.get_queryset(language_code).language_or_default(
-            language_code)
+        return self.get_queryset(language_code).language_or_default(language_code)
 
     def language(self, language_code):
         language_code = self.get_language_key(language_code)
         return self.get_queryset(language_code).language(language_code)
 
-    def order_by_json_path(self, json_path, language_code=None, order='asc'):
+    def order_by_json_path(self, json_path, language_code=None, order="asc"):
         """
         Makes the method available through the manager (i.e. `Model.objects`).
 
@@ -138,4 +144,5 @@ class TranslationManager(models.Manager, TranslationMixin):
             MyModel.objects.order_by_json_path('title', language_code='en_us', order='desc')
         """
         return self.get_queryset(language_code).order_by_json_path(
-            json_path, language_code=language_code, order=order)
+            json_path, language_code=language_code, order=order
+        )

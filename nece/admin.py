@@ -12,17 +12,16 @@ def generate_translatable_schema(model):
     # noinspection PyProtectedMember
     translatable_fields = model._meta.translatable_fields
     return {
-        'type': 'object',
-        'properties': {
+        "type": "object",
+        "properties": {
             language: {
-                'type': 'object',
-                'properties': {
-                    field: {
-                        'type': 'string'
-                    } for field in translatable_fields
+                "type": "object",
+                "properties": {
+                    field: {"type": "string"} for field in translatable_fields
                 },
-            } for language in settings.TRANSLATIONS_MAP
-        }
+            }
+            for language in settings.TRANSLATIONS_MAP
+        },
     }
 
 
@@ -32,6 +31,10 @@ class TranslatableModelAdmin(ModelAdmin):
     """
 
     def formfield_for_dbfield(self, db_field, **kwargs):
-        if db_field.name == 'translations':
-            kwargs['widget'] = JSONEditorWidget(generate_translatable_schema(self.model), False)
-        return super(TranslatableModelAdmin, self).formfield_for_dbfield(db_field, **kwargs)
+        if db_field.name == "translations":
+            kwargs["widget"] = JSONEditorWidget(
+                generate_translatable_schema(self.model), False
+            )
+        return super(TranslatableModelAdmin, self).formfield_for_dbfield(
+            db_field, **kwargs
+        )

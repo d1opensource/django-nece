@@ -10,7 +10,10 @@ class Fruit(TranslationModel):
     scientific_name = models.CharField(max_length=255)
 
     class Meta:
-        translatable_fields = ('name', 'benefits', )
+        translatable_fields = (
+            "name",
+            "benefits",
+        )
 
     def __str__(self):
         return self.name

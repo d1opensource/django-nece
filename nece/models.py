@@ -1,19 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-try:
-    from django.db.models import JSONField
-except ImportError:
-    # Django < 3.1
-    from django.contrib.postgres.fields import JSONField
 from django.db import models
-from django.db.models import options
+from django.db.models import JSONField, options
 
-from nece.managers import TranslationManager, TranslationMixin
 from nece.exceptions import NonTranslatableFieldError
+from nece.managers import TranslationManager, TranslationMixin
 
-
-options.DEFAULT_NAMES += ('translatable_fields',)
+options.DEFAULT_NAMES += ("translatable_fields",)
 
 
 class Language(object):
@@ -35,9 +29,9 @@ class TranslationModel(models.Model, TranslationMixin):
 
     def __getattribute__(self, name):
         attr = object.__getattribute__(self, name)
-        if name.startswith('__'):
+        if name.startswith("__"):
             return attr
-        translated = object.__getattribute__(self, '_translated')
+        translated = object.__getattribute__(self, "_translated")
         if translated:
             if hasattr(translated, name):
                 return getattr(translated, name) or attr
@@ -83,8 +77,7 @@ class TranslationModel(models.Model, TranslationMixin):
         language_codes = self.get_language_keys(language_code, fallback)
         # Default language field
         fields = self._meta.translatable_fields
-        self.default_language = Language(
-            **{i: getattr(self, i, None) for i in fields})
+        self.default_language = Language(**{i: getattr(self, i, None) for i in fields})
         # Translation fields
         if self.translations:
             for code in language_codes:
@@ -124,7 +117,7 @@ class TranslationModel(models.Model, TranslationMixin):
     def save(self, *args, **kwargs):
         language_code = self._language_code
         self.reset_language()
-        if self.translations == '':
+        if self.translations == "":
             self.translations = None
         super(TranslationModel, self).save(*args, **kwargs)
         self.language(language_code)
