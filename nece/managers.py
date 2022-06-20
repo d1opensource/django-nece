@@ -47,7 +47,7 @@ class TranslationMixin(object):
 
 class TranslationModelIterable(ModelIterable):
     def __iter__(self):
-        for obj in super(TranslationModelIterable, self).__iter__():
+        for obj in super().__iter__():
             if self.queryset._language_code:
                 # Set the current language without fallback
                 # as query does not support fallback
@@ -59,7 +59,7 @@ class TranslationQuerySet(models.QuerySet, TranslationMixin):
     _language_code = None
 
     def __init__(self, model=None, query=None, using=None, hints=None):
-        super(TranslationQuerySet, self).__init__(model, query, using, hints)
+        super().__init__(model, query, using, hints)
         self._iterable_class = TranslationModelIterable
 
     def language_or_default(self, language_code):

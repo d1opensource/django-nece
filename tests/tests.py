@@ -26,7 +26,6 @@ class TranslationMixinTest(TestCase):
 
 class TranslationTest(TestCase):
     def setUp(self):
-        super(TranslationTest, self).setUp()
         create_fixtures()
 
     def test_basic_queries(self):
