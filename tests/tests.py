@@ -42,11 +42,11 @@ class TranslationTest(TestCase):
         self.assertEqual(fruits.count(), 1)
 
     def test_language_filter_queryset_without_language_but_override(self):
-        with override("de_de"):
+        with override("de_de", deactivate=True):
             fruits = Fruit.objects.filter(name="Apfel")
             self.assertEqual(fruits[0].name, "Apfel")
         self.assertEqual(fruits.count(), 1)
-        self.assertEqual(fruits[0].language("en_us").name, "apple")
+        self.assertEqual(Fruit.objects.filter(name="apple")[0].name, "apple")
 
     def test_language_filter(self):
         self.assertEqual(
@@ -64,7 +64,7 @@ class TranslationTest(TestCase):
         fruit = Fruit.objects.get(name="apple")
         self.assertEqual(fruit.language_or_none("en").name, "apple")
         self.assertEqual(fruit.language_or_none("tr").name, "elma")
-        self.assertEqual(fruit.language_or_none("gibrish"), None)
+        self.assertEqual(fruit.language_or_none("gibberish"), None)
 
     def test_language_switch(self):
         fruit = Fruit.objects.get(name="apple")

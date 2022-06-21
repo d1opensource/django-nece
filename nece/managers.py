@@ -76,7 +76,7 @@ class TranslationQuerySet(models.QuerySet, TranslationMixin):
         return self.filter(translations__has_key=language_code)
 
     def _clone(self, *args, **kwargs):
-        clone = super(TranslationQuerySet, self)._clone(*args, **kwargs)
+        clone = super()._clone(*args, **kwargs)
         clone._language_code = self._language_code
         return clone
 
