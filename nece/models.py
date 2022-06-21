@@ -22,7 +22,7 @@ class TranslationModel(models.Model, TranslationMixin):
 
     def __init__(self, *args, **kwargs):
         self._language_code = self._default_language_code
-        return super(TranslationModel, self).__init__(*args, **kwargs)
+        return super().__init__(*args, **kwargs)
 
     def __getattribute__(self, name):
         attr = object.__getattribute__(self, name)
@@ -116,7 +116,7 @@ class TranslationModel(models.Model, TranslationMixin):
         self.reset_language()
         if self.translations == "":
             self.translations = None
-        super(TranslationModel, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.language(language_code)
 
     class Meta:

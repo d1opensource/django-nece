@@ -3,6 +3,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 from django.db.models.expressions import RawSQL
 from django.db.models.query import ModelIterable
+from django.utils.translation import get_language
 
 TRANSLATIONS_DEFAULT = getattr(settings, "TRANSLATIONS_DEFAULT", "en_us")
 TRANSLATIONS_MAP = getattr(settings, "TRANSLATIONS_MAP", {"en": "en_us"})
@@ -70,10 +71,9 @@ class TranslationQuerySet(models.QuerySet, TranslationMixin):
     def language(self, language_code):
         language_code = self.get_language_key(language_code)
         self._language_code = language_code
-        results = self.language_or_default(language_code)
         if self.is_default_language(language_code):
-            return results
-        return results.filter(translations__has_key=(language_code))
+            return self
+        return self.filter(translations__has_key=language_code)
 
     def _clone(self, *args, **kwargs):
         clone = super(TranslationQuerySet, self)._clone(*args, **kwargs)
@@ -90,7 +90,7 @@ class TranslationQuerySet(models.QuerySet, TranslationMixin):
                         # horrible hack but contains by itself bring none results.
                         key = key.replace("contains", "icontains")
                     kwargs[key] = value
-        return super(TranslationQuerySet, self).filter(*args, **kwargs)
+        return super().filter(*args, **kwargs)
 
     def order_by_json_path(self, json_path, language_code=None, order="asc"):
         """
@@ -122,8 +122,11 @@ class TranslationManager(models.Manager, TranslationMixin):
     def get_queryset(self, language_code=None):
         qs = self._queryset_class(self.model, using=self.db, hints=self._hints)
         language_code = self.get_language_key(
-            language_code or self._default_language_code
+            language_code
         )
+        current_language = get_language().replace("-", "_")
+        if language_code is None:
+            language_code = current_language
         qs.language(language_code)
         return qs
 

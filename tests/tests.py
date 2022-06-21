@@ -5,6 +5,7 @@ import os
 
 from django.core.management import call_command
 from django.test import TestCase
+from django.utils.translation import override
 
 from nece import managers
 from nece.exceptions import NonTranslatableFieldError
@@ -39,6 +40,13 @@ class TranslationTest(TestCase):
     def test_language_filter_queryset_with_contains(self):
         fruits = Fruit.objects.language("de_de").filter(name__contains="pfel")
         self.assertEqual(fruits.count(), 1)
+
+    def test_language_filter_queryset_without_language_but_override(self):
+        with override("de_de"):
+            fruits = Fruit.objects.filter(name="Apfel")
+            self.assertEqual(fruits[0].name, "Apfel")
+        self.assertEqual(fruits.count(), 1)
+        self.assertEqual(fruits[0].language("en_us").name, "apple")
 
     def test_language_filter(self):
         self.assertEqual(
