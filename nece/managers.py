@@ -43,8 +43,10 @@ class TranslationMixin(object):
 
     def is_default_language(self, language_code):
         if language_code is None:
-            return True
-        language_code = self.get_language_key(language_code)
+            language_code = get_language().replace("-", "_")
+            self._language_code = language_code
+        else:
+            language_code = self.get_language_key(language_code)
         return language_code == TRANSLATIONS_DEFAULT
 
 
@@ -109,6 +111,19 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
                 expressions[annotation_key] = new_field
                 fields.append(annotation_key)
         return super()._values(*fields, **expressions)
+
+    def values(self, *fields, **expressions):
+        vals = super().values(*fields, **expressions)
+        if not self.is_default_language(self._language_code):
+            for val in vals:
+                for field in fields:
+                    if field not in self.model._meta.translatable_fields:
+                        continue
+                    del val[field]
+                    annotation_key = f"{field}_{self._language_code}"
+                    val[field] = val[annotation_key]
+                    del val[annotation_key]
+        return vals
 
     def filter(self, *args, **kwargs):
         if not self.is_default_language(self._language_code):
