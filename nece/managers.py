@@ -42,6 +42,8 @@ class TranslationMixin(object):
         return codes
 
     def is_default_language(self, language_code):
+        if language_code is None:
+            return True
         language_code = self.get_language_key(language_code)
         return language_code == TRANSLATIONS_DEFAULT
 
@@ -56,7 +58,7 @@ class TranslationModelIterable(ModelIterable):
             yield obj
 
 
-class TranslationQuerySet(models.QuerySet, TranslationMixin):
+class TranslationQuerySet(TranslationMixin, models.QuerySet):
     _language_code = None
 
     def __init__(self, model=None, query=None, using=None, hints=None):
