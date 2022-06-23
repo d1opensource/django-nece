@@ -82,10 +82,38 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
         clone._language_code = self._language_code
         return clone
 
+    @staticmethod
+    def _get_field(complete_expression):
+        return complete_expression.split("__")
+
+    def _values(self, *fields, **expressions):
+        """
+        Add the translated fields in case `values` or `values_list` is on the queryset
+
+        `Fruits.objects.language('de_de').filter(name="Apfel").values_list("name")`
+
+        Will return:
+
+        <TranslationQuerySet [{'name': 'apple', 'name_de_de': 'Apfel'}]
+        """
+        _fields = fields + tuple(expressions)
+        fields = list(fields)
+
+        if not self.is_default_language(self._language_code):
+            for field_name in _fields:
+                field = self._get_field(field_name)[0]
+                if field not in self.model._meta.translatable_fields:
+                    continue
+                new_field = models.F(f"translations__{self._language_code}__{field}")
+                annotation_key = f"{field}_{self._language_code}"
+                expressions[annotation_key] = new_field
+                fields.append(annotation_key)
+        return super()._values(*fields, **expressions)
+
     def filter(self, *args, **kwargs):
         if not self.is_default_language(self._language_code):
             for key, value in list(kwargs.items()):
-                if key.split("__")[0] in self.model._meta.translatable_fields:
+                if self._get_field(key)[0] in self.model._meta.translatable_fields:
                     del kwargs[key]
                     key = f"translations__{self._language_code}__{key}"
                     if "contains" in key and "icontains" not in key:
