@@ -1,3 +1,4 @@
+"""Managers for django-nece."""
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
@@ -16,15 +17,17 @@ if any(not isinstance(val, list) for val in TRANSLATIONS_FALLBACK.values()):
     )
 
 
-class TranslationMixin(object):
+class TranslationMixin:
+    """Mixin that will handle the current language configurations."""
 
     _default_language_code = TRANSLATIONS_DEFAULT
 
     def get_language_key(self, language_code):
+        """Retrieve the language_code from the array of language_keys."""
         return self.get_language_keys(language_code)[0]
 
     def get_language_keys(self, language_code, fallback=True):
-        """Return the possible language codes"""
+        """Return the possible language codes."""
         codes = []
 
         code = TRANSLATIONS_MAP.get(language_code, language_code)
@@ -42,6 +45,7 @@ class TranslationMixin(object):
         return codes
 
     def is_default_language(self, language_code):
+        """Return true if language_code is the default, in case language_code is none it will retrieve it from the thread."""
         if language_code is None:
             language_code = get_language().replace("-", "_")
             self._language_code = language_code
@@ -51,28 +55,34 @@ class TranslationMixin(object):
 
 
 class TranslationModelIterable(ModelIterable):
+    """Iterable class that will set the current language without fallback."""
+
     def __iter__(self):
+        """Retrieve translation if the item is translatable."""
         for obj in super().__iter__():
             if self.queryset._language_code:
-                # Set the current language without fallback
-                # as query does not support fallback
                 obj.language(self.queryset._language_code, fallback=False)
             yield obj
 
 
 class TranslationQuerySet(TranslationMixin, models.QuerySet):
+    """Override the current queryset in order to retrieve the translations."""
+
     _language_code = None
 
     def __init__(self, model=None, query=None, using=None, hints=None):
+        """Override the iterable class in order to use the TranslationModelIterable."""
         super().__init__(model, query, using, hints)
         self._iterable_class = TranslationModelIterable
 
     def language_or_default(self, language_code):
+        """Update the queryset to use the requested language."""
         language_code = self.get_language_key(language_code)
         self._language_code = language_code
         return self
 
     def language(self, language_code):
+        """Add a filter to the queryset to retrieve the fields based on the language_code."""
         language_code = self.get_language_key(language_code)
         self._language_code = language_code
         if self.is_default_language(language_code):
@@ -80,27 +90,31 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
         return self.filter(translations__has_key=language_code)
 
     def _clone(self):
+        """Override `_clone` method in order to inject the `language_code`."""
         clone = super()._clone()
         clone._language_code = self._language_code
         return clone
 
     @staticmethod
     def _get_field(complete_expression):
+        """Split fields from expressions."""
         return complete_expression.split("__")
 
     def _values(self, *fields, **expressions):
         """
-        Add the translated fields in case `values` or `values_list` is on the queryset
+        Add the translated fields in case `values` or `values_list` is on the queryset.
 
         `Fruits.objects.language('de_de').filter(name="Apfel").values_list("name")`
 
         Will return:
-
         <TranslationQuerySet [{'name': 'apple', 'name_de_de': 'Apfel'}]
 
+        In case or executing it with `values_list`
 
         `Fruits.objects.language('de_de').filter(name="Apfel").values_list("name")`
 
+        Will return:
+        <TranslationQuerySet [("Apfel",)]>
         """
         _fields = fields + tuple(expressions)
         fields = []
@@ -120,6 +134,7 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
         return super()._values(*fields, **expressions)
 
     def values(self, *fields, **expressions):
+        """Override the default `values` method from Django in order to replace the original field with the translation."""
         vals = super().values(*fields, **expressions)
         if not self.is_default_language(self._language_code):
             for val in vals:
@@ -132,20 +147,20 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
         return vals
 
     def filter(self, *args, **kwargs):
+        """Override the `filter` method from Django in order to query the field tha contains the translations."""
         if not self.is_default_language(self._language_code):
             for key, value in list(kwargs.items()):
                 if self._get_field(key)[0] in self.model._meta.translatable_fields:
                     del kwargs[key]
                     key = f"translations__{self._language_code}__{key}"
                     if "contains" in key and "icontains" not in key:
-                        # horrible hack but contains by itself bring none results.
                         key = key.replace("contains", "icontains")
                     kwargs[key] = value
         return super().filter(*args, **kwargs)
 
     def order_by_json_path(self, json_path, language_code=None, order="asc"):
         """
-        Orders a queryset by the value of the specified `json_path`.
+        Order a queryset by the value of the specified `json_path`.
 
         More about the `#>>` operator and the `json_path` arg syntax:
         https://www.postgresql.org/docs/current/static/functions-json.html
@@ -168,9 +183,16 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
 
 
 class TranslationManager(models.Manager, TranslationMixin):
+    """TranslationManager class."""
+
     _queryset_class = TranslationQuerySet
 
     def get_queryset(self, language_code=None):
+        """
+        Override the queryset in order to retrieve the translations.
+
+        It will also call `get_language` in order to retrieve the current language of the thread if not specified.
+        """
         qs = self._queryset_class(self.model, using=self.db, hints=self._hints)
         language_code = self.get_language_key(
             language_code
@@ -182,16 +204,18 @@ class TranslationManager(models.Manager, TranslationMixin):
         return qs
 
     def language_or_default(self, language_code):
+        """Retrieve the queryset with the translation and fallback to the default language."""
         language_code = self.get_language_key(language_code)
         return self.get_queryset(language_code).language_or_default(language_code)
 
     def language(self, language_code):
+        """Retrieve the queryset translated based on the language_code."""
         language_code = self.get_language_key(language_code)
         return self.get_queryset(language_code).language(language_code)
 
     def order_by_json_path(self, json_path, language_code=None, order="asc"):
         """
-        Makes the method available through the manager (i.e. `Model.objects`).
+        Make the method available through the manager (i.e. `Model.objects`).
 
         Usage example:
             MyModel.objects.order_by_json_path('title', order='desc')
