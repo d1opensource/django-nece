@@ -79,8 +79,8 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
             return self
         return self.filter(translations__has_key=language_code)
 
-    def _clone(self, *args, **kwargs):
-        clone = super()._clone(*args, **kwargs)
+    def _clone(self):
+        clone = super()._clone()
         clone._language_code = self._language_code
         return clone
 
@@ -97,14 +97,21 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
         Will return:
 
         <TranslationQuerySet [{'name': 'apple', 'name_de_de': 'Apfel'}]
+
+
+        `Fruits.objects.language('de_de').filter(name="Apfel").values_list("name")`
+
         """
         _fields = fields + tuple(expressions)
-        fields = list(fields)
+        fields = []
 
         if not self.is_default_language(self._language_code):
             for field_name in _fields:
+                if not isinstance(field_name, str):
+                    continue
                 field = self._get_field(field_name)[0]
-                if field not in self.model._meta.translatable_fields:
+                if field not in self.model._meta.translatable_fields and isinstance(field, str):
+                    fields.append(field)
                     continue
                 new_field = models.F(f"translations__{self._language_code}__{field}")
                 annotation_key = f"{field}_{self._language_code}"
@@ -119,7 +126,6 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
                 for field in fields:
                     if field not in self.model._meta.translatable_fields:
                         continue
-                    del val[field]
                     annotation_key = f"{field}_{self._language_code}"
                     val[field] = val[annotation_key]
                     del val[annotation_key]

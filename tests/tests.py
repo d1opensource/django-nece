@@ -42,6 +42,11 @@ class TranslationTest(TestCase):
             apples = Fruit.objects.filter(name="Apfel").values("name")
         self.assertEqual(apples[0]["name"], "Apfel")
 
+    def test_language_values_list(self):
+        with override("de_de"):
+            apples = Fruit.objects.filter(name="Apfel").values_list("name")
+        self.assertEqual(apples[0][0], "Apfel")
+
     def test_language_filter_queryset_with_contains(self):
         fruits = Fruit.objects.language("de_de").filter(name__contains="pfel")
         self.assertEqual(fruits.count(), 1)
