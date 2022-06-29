@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import os
 
 from django.core.management import call_command
@@ -26,7 +23,8 @@ class TranslationMixinTest(TestCase):
 
 
 class TranslationTest(TestCase):
-    def setUp(self):
+    @classmethod
+    def setUpTestData(cls):
         create_fixtures()
 
     def test_basic_queries(self):
@@ -150,8 +148,8 @@ class TranslationTest(TestCase):
 
 
 class TranslationOrderingTest(TestCase):
-    def setUp(self):
-        super(TranslationOrderingTest, self).setUp()
+    @classmethod
+    def setUpTestData(cls):
         CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
         call_command("loaddata", "%s/ordering.json" % CURRENT_DIR)
 
