@@ -117,7 +117,7 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
         <TranslationQuerySet [("Apfel",)]>
         """
         _fields = fields + tuple(expressions)
-        fields = []
+        new_fields = []
 
         if not self.is_default_language(self._language_code):
             for field_name in _fields:
@@ -125,12 +125,14 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
                     continue
                 field = self._get_field(field_name)[0]
                 if field not in self.model._meta.translatable_fields and isinstance(field, str):
-                    fields.append(field)
+                    new_fields.append(field)
                     continue
                 new_field = models.F(f"translations__{self._language_code}__{field}")
                 annotation_key = f"{field}_{self._language_code}"
                 expressions[annotation_key] = new_field
-                fields.append(annotation_key)
+                new_fields.append(annotation_key)
+            if len(new_fields) > 0:
+                fields = new_fields
         return super()._values(*fields, **expressions)
 
     def values(self, *fields, **expressions):
