@@ -18,6 +18,10 @@ INSTALLED_APPS = (
     "nece",
     "tests",
 )
+MIDDLEWARE = [
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "nece.middleware.NeceMiddleware"
+]
 TRANSLATIONS_DEFAULT = "en_us"
 TRANSLATIONS_MAP = {"en": "en_us", "tr": "tr_tr", "de": "de_de", "it": "it_it"}
 TRANSLATIONS_FALLBACK = {"fr_ca": ["fr_fr"], "en_us": ["en_gb"]}

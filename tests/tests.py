@@ -1,12 +1,13 @@
 import os
+import mock
 
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.utils.translation import override
 
 from nece import managers
+from nece.middleware import NeceMiddleware
 from nece.exceptions import NonTranslatableFieldError
-
 from .fixtures import create_fixtures
 from .models import Fruit
 
@@ -27,7 +28,8 @@ class TranslationTest(TestCase):
     def setUpTestData(cls):
         create_fixtures()
 
-    def test_basic_queries(self):
+    @staticmethod
+    def test_basic_queries():
         Fruit.objects.all()
         Fruit.objects.filter(name="apple")
         Fruit.objects.values()
@@ -150,8 +152,8 @@ class TranslationTest(TestCase):
 class TranslationOrderingTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
-        call_command("loaddata", "%s/ordering.json" % CURRENT_DIR)
+        current_dir = os.path.abspath(os.path.dirname(__file__))
+        call_command("loaddata", f"{current_dir}/ordering.json")
 
     def test_order_by_name_asc(self):
         # en_us
@@ -244,3 +246,33 @@ class TranslationOrderingTest(TestCase):
         )
         for i, fruit in enumerate(fruits):
             self.assertEqual(fruit.name, expected_order[i])
+
+
+class NeceMiddlewareTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.factory = RequestFactory()
+
+    def test_basic_middleware(self):
+        get_response = mock.MagicMock()
+        headers = {
+            "X-NECE-LANGUAGE": "en_us",
+        }
+        request = self.factory.get('/')
+        request.session = {}
+        request.headers = headers
+
+        middleware = NeceMiddleware(get_response)
+        response = middleware(request)
+        self.assertEqual(get_response.return_value, response)
+        self.assertEqual(request.session["_language"], "en_us")
+
+    def test_middleware_is_not_used(self):
+        get_response = mock.MagicMock()
+        request = self.factory.get('/')
+        request.session = {}
+
+        middleware = NeceMiddleware(get_response)
+        middleware(request)
+        self.assertFalse(get_response.assert_called_once())
+        self.assertEqual(request.session, {})
