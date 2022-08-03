@@ -13,7 +13,7 @@ class NeceMiddleware:
         if (language_header_key in request.headers
                 and request.headers[language_header_key] is not None
                 and request.headers[language_header_key] in available_languages.values()):
-            request.session._language = request.headers[language_header_key]
+            request.session["_language"] = request.headers[language_header_key]
             activate(request.headers[language_header_key])
 
         response = self.get_response(request)
