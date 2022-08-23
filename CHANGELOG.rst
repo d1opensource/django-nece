@@ -1,10 +1,20 @@
 Changelog for django-nece
 =========================
 
-0.12 (unreleased)
+0.12. (2022-08-22)
 -----------------
 
-- Nothing changed yet.
+- Remove admin and dependency of ``django-admin-json-editor``. Reason was
+  simple, breaks the css and for what it is, it's useless.
+- Make `values` and `values_list` to work (replace the original field with the
+  translation)
+- Deprecated python2 code
+- Add tox.ini so you can run tests for different python / django combos
+- Integration with Django i18n framework to detect the language and apply it to
+  `language` method.
+- Add ``NeceMiddleware``, now with a special header `X-NECE-LANGUAGE` you can
+  request translations as long as the language is on the available languages
+  setting.
 
 
 0.11 (2021-05-10)
