@@ -148,6 +148,15 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
                     del val[annotation_key]
         return vals
 
+    def exclude(self, *args, **kwargs):
+        if not self.is_default_language(self._language_code):
+            for key, value in list(kwargs.items()):
+                if self._get_field(key)[0] in self.model._meta.translatable_fields:
+                    del kwargs[key]
+                    key = f"translations__{self._language_code}__{key}"
+                    kwargs[key] = value
+        return super().exclude(*args, **kwargs)
+
     def filter(self, *args, **kwargs):
         """Override the `filter` method from Django in order to query the field tha contains the translations."""
         if not self.is_default_language(self._language_code):

@@ -12,7 +12,8 @@ This is a fork of https://github.com/tatterdemalion/django-nece which is not mai
 
 The package name has been changed from ``nece`` to ``django-nece``.
 
-
+This is a fork of an updated fork (lol) (polyconseil) version, while we decide
+if we merge or not some of the changes.
 
 
 nece?
@@ -152,7 +153,7 @@ Default language code. Default value: ```en_us```
 TRANSLATIONS_MAP
 ~~~~~~~~~~~~~~~~
 
-Shortcuts for ```languagecode_countrycode``` notation. 
+Shortcuts for ```languagecode_countrycode``` notation.
 
 Example:
 
@@ -190,31 +191,6 @@ Example:
         'en_us': ['en_gb'],
     }
 
-Admin panel
------------
-
-Use `TranslatableModelAdmin` for pretty JSON editor (powered by `django-admin-json-editor`_).
-
-.. figure:: https://raw.githubusercontent.com/polyconseil/django-nece/master/images/admin.png
-   :alt: nece
-
-Example:
-
-.. code-block:: python
-
-   # settings.py
-   INSTALLED_APPS = [
-       ...
-       'django_admin_json_editor',
-       ...
-   ]
-
-   # admin.py
-   from nece.admin import TranslatableModelAdmin
-
-   class PlaceAdmin(TranslatableModelAdmin):
-       list_display = ('...')
-
 
 Contributors & Thanks
 ---------------------
@@ -226,6 +202,7 @@ Contributors & Thanks
 - `Mathieu Richardoz`_
 - `Marc Hertzog`_
 - `Alexey Kotenko`_
+- `Ángel Velásquez`_
 
 `Change Log`_
 
@@ -239,6 +216,7 @@ Contributors & Thanks
 .. _Mathieu Richardoz: https://github.com/metamatik
 .. _Marc Hertzog: https://github.com/kemar
 .. _Alexey Kotenko: https://github.com/k0t3n
-.. _Change Log: https://github.com/polyconseil/django-nece/blob/master/CHANGELOG.md
+.. _Ángel Velásquez_: https://github.com/angvp
+.. _Change Log: https://github.com/d1opensource/django-nece/blob/master/CHANGELOG.rst
 .. _django-admin-json-editor: https://github.com/abogushov/django-admin-json-editor
 
