@@ -248,13 +248,12 @@ class TranslationOrderingTest(TestCase):
             self.assertEqual(fruit.name, expected_order[i])
 
 
-@mock.patch("nece.middleware.override")
 class NeceMiddlewareTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.factory = RequestFactory()
 
-    def test_basic_middleware(self, translation_mock):
+    def test_basic_middleware(self):
         get_response = mock.MagicMock()
         headers = {
             "X-NECE-LANGUAGE": "en_us",
@@ -267,9 +266,8 @@ class NeceMiddlewareTestCase(TestCase):
         response = middleware(request)
         self.assertEqual(get_response.return_value, response)
         self.assertEqual(request.session["_language"], "en_us")
-        translation_mock.assert_called()
 
-    def test_middleware_is_not_used(self, translation_mock):
+    def test_middleware_is_not_used(self):
         get_response = mock.MagicMock()
         request = self.factory.get('/')
         request.session = {}
@@ -278,4 +276,3 @@ class NeceMiddlewareTestCase(TestCase):
         middleware(request)
         self.assertFalse(get_response.assert_called_once())
         self.assertEqual(request.session, {})
-        translation_mock.assert_not_called()

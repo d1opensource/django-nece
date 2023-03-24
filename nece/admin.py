@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.admin import ModelAdmin
+from django_admin_json_editor import JSONEditorWidget
 
 
 def generate_translatable_schema(model):
@@ -26,8 +27,14 @@ def generate_translatable_schema(model):
 
 class TranslatableModelAdmin(ModelAdmin):
     """
-    Override `translations` field.
+    Overrides `translations` field
     """
 
     def formfield_for_dbfield(self, db_field, **kwargs):
-        return super().formfield_for_dbfield(db_field, **kwargs)
+        if db_field.name == "translations":
+            kwargs["widget"] = JSONEditorWidget(
+                generate_translatable_schema(self.model), False
+            )
+        return super(TranslatableModelAdmin, self).formfield_for_dbfield(
+            db_field, **kwargs
+        )
