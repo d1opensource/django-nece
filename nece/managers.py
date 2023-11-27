@@ -208,7 +208,7 @@ class TranslationManager(models.Manager, TranslationMixin):
         language_code = self.get_language_key(
             language_code
         )
-        current_language = get_language() or settings.TRANSLATIONS_DEFAULT
+        current_language = get_language() or TRANSLATIONS_DEFAULT
         current_language = current_language.replace("-", "_")
         if language_code is None:
             language_code = current_language
