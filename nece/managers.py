@@ -47,13 +47,13 @@ class TranslationMixin:
     def is_default_language(self, language_code):
         """Return true if language_code is the default, in case language_code is none it will retrieve it from the thread."""
         if language_code is None:
-            language_code = self._get_language_code()
+            language_code = self.get_language_code()
             self._language_code = language_code
         else:
             language_code = self.get_language_key(language_code)
         return language_code == TRANSLATIONS_DEFAULT
 
-    def _get_language_code(self):
+    def get_language_code(self):
         language = get_language() or self._default_language_code
         language_code = language.replace("-", "_")
         return language_code
@@ -212,7 +212,7 @@ class TranslationManager(models.Manager, TranslationMixin):
         qs = self._queryset_class(self.model, using=self.db, hints=self._hints)
         language_code = self.get_language_key(language_code)
         if language_code is None:
-            language_code = self._get_language_code()
+            language_code = self.get_language_code()
         qs.language(language_code)
         return qs
 

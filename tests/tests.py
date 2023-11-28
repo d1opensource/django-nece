@@ -152,7 +152,7 @@ class TranslationTest(TestCase):
 
     @patch("django.utils.translation._trans.get_language", return_value=None)
     def test_get_language_code(self, _):
-        language_code = Fruit.objects._get_language_code()
+        language_code = Fruit.objects.get_language_code()
         self.assertEqual(language_code, "en_us")
 
 
