@@ -47,11 +47,16 @@ class TranslationMixin:
     def is_default_language(self, language_code):
         """Return true if language_code is the default, in case language_code is none it will retrieve it from the thread."""
         if language_code is None:
-            language_code = get_language().replace("-", "_")
+            language_code = self.get_language_code()
             self._language_code = language_code
         else:
             language_code = self.get_language_key(language_code)
         return language_code == TRANSLATIONS_DEFAULT
+
+    def get_language_code(self):
+        language = get_language() or self._default_language_code
+        language_code = language.replace("-", "_")
+        return language_code
 
 
 class TranslationModelIterable(ModelIterable):
@@ -205,12 +210,9 @@ class TranslationManager(models.Manager, TranslationMixin):
         It will also call `get_language` in order to retrieve the current language of the thread if not specified.
         """
         qs = self._queryset_class(self.model, using=self.db, hints=self._hints)
-        language_code = self.get_language_key(
-            language_code
-        )
-        current_language = get_language().replace("-", "_")
+        language_code = self.get_language_key(language_code)
         if language_code is None:
-            language_code = current_language
+            language_code = self.get_language_code()
         qs.language(language_code)
         return qs
 

@@ -1,4 +1,6 @@
 import os
+from unittest.mock import patch
+
 import mock
 
 from django.core.management import call_command
@@ -147,6 +149,11 @@ class TranslationTest(TestCase):
         names = Fruit.objects.values()
         self.assertEqual(names.count(), Fruit.objects.count())
         self.assertEqual(len(names), Fruit.objects.count())
+
+    @patch("django.utils.translation._trans.get_language", return_value=None)
+    def test_get_language_code(self, _):
+        language_code = Fruit.objects.get_language_code()
+        self.assertEqual(language_code, "en_us")
 
 
 class TranslationOrderingTest(TestCase):
