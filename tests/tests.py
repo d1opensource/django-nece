@@ -32,7 +32,7 @@ class TranslationTest(TestCase):
         create_fixtures()
 
     def tearDown(self) -> None:
-        """Make sure default language is always set before each run."""
+        """Make sure default language is always set after each run."""
         activate("en-us")
 
     @staticmethod
