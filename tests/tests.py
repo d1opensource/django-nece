@@ -5,7 +5,8 @@ import mock
 
 from django.core.management import call_command
 from django.test import RequestFactory, TestCase
-from django.utils.translation import override
+
+from django.utils.translation import override, activate
 
 from nece import managers
 from nece.middleware import NeceMiddleware
@@ -29,6 +30,10 @@ class TranslationTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         create_fixtures()
+
+    def tearDown(self) -> None:
+        """Make sure default language is always set before each run."""
+        activate("en-us")
 
     @staticmethod
     def test_basic_queries():
@@ -154,6 +159,19 @@ class TranslationTest(TestCase):
     def test_get_language_code(self, _):
         language_code = Fruit.objects.get_language_code()
         self.assertEqual(language_code, "en_us")
+
+    def test_get_all_based_on_default_language(self):
+        english_names = ["apple", "pear", "banana"]
+        french_names = ["pomme", "pear", "banana"]
+        turkish_names = ["elma", "armut", "banana"]
+        for fruit in Fruit.objects.all():
+            self.assertIn(fruit.name, english_names)
+        activate("fr-fr")
+        for fruit in Fruit.objects.all():
+            self.assertIn(fruit.name, french_names)
+        activate("tr-tr")
+        for fruit in Fruit.objects.all():
+            self.assertIn(fruit.name, turkish_names)
 
 
 class TranslationOrderingTest(TestCase):
