@@ -96,11 +96,8 @@ class TranslationQuerySet(TranslationMixin, models.QuerySet):
 
     def _clone(self):
         """Override `_clone` method in order to inject the `language_code`."""
-        language_code = self._language_code
-        if language_code is None:
-            language_code = get_language().replace("-", "_")
         clone = super()._clone()
-        clone._language_code = language_code
+        clone._language_code = self._language_code or get_language().replace("-", "_")
         return clone
 
     @staticmethod
