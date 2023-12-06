@@ -55,7 +55,8 @@ class TranslationTest(TestCase):
         self.assertEqual(apples[0][0], "Apfel")
 
     def test_language_filter_queryset_with_contains(self):
-        fruits = Fruit.objects.language("de_de").filter(name__contains="pfel")
+        activate("de-de")
+        fruits = Fruit.objects.filter(name__contains="pfel")
         self.assertEqual(fruits.count(), 1)
 
     def test_language_filter_queryset_without_language_but_override(self):
@@ -69,8 +70,9 @@ class TranslationTest(TestCase):
         self.assertEqual(
             Fruit.objects.language("en_us").get(name="apple").name, "apple"
         )
+        activate("de-de")
         self.assertEqual(
-            Fruit.objects.language("de_de").get(name="Apfel").name, "Apfel"
+            Fruit.objects.get(name="Apfel").name, "Apfel"
         )
 
     def test_language_or_default(self):
@@ -114,18 +116,11 @@ class TranslationTest(TestCase):
         self.assertEqual(fruit.default_language.name, "not apple")
         fruit.save()
 
-    def test_get_by_language(self):
-        self.assertEqual(Fruit.objects.language("tr_tr").get(name="elma").name, "elma")
-
     def test_nontranslatable_fields(self):
         fruit = Fruit.objects.get(name="apple")
         with self.assertRaises(NonTranslatableFieldError) as error:
             fruit.translate("it_it", dummy_field="hello")
         self.assertEqual(error.exception.fieldname, "dummy_field")
-
-    def test_translation_mapping(self):
-        self.assertTrue(Fruit.objects.language("tr").exists())
-        self.assertEqual(Fruit.objects.language("tr")[0].name, "elma")
 
     def test_language_as_dict(self):
         fruit = Fruit.objects.get(name="apple")
@@ -173,6 +168,23 @@ class TranslationTest(TestCase):
         for fruit in Fruit.objects.all():
             self.assertIn(fruit.name, turkish_names)
 
+    def test_create_and_update(self):
+        activate("fr-ca")
+        fruit = Fruit.objects.create(name="Pastèque", benefits="Bon pour la santé",
+                                     scientific_name="Citrullus lanatus")
+        self.assertEqual(fruit.name, "Pastèque")
+        self.assertEqual(fruit.benefits, "Bon pour la santé")
+        expected_translations = {"fr_ca": {"benefits": "Bon pour la santé", "name": "Pastèque"}}
+        self.assertEqual(fruit.translations, expected_translations)
+        activate("en_us")
+        fruit.name = "Watermelon"
+        fruit.benefits = "good for health"
+        fruit.save()
+        self.assertEqual(fruit.name, "Watermelon")
+        self.assertEqual(fruit.benefits, "good for health")
+        expected_translations = {"fr_ca": {"benefits": "Bon pour la santé", "name": "Pastèque"}}
+        self.assertEqual(fruit.translations, expected_translations)
+
 
 class TranslationOrderingTest(TestCase):
     @classmethod
@@ -205,6 +217,7 @@ class TranslationOrderingTest(TestCase):
             "Poire",
             "Pomme",
         ]
+        activate("fr-fr")
         fruits = Fruit.objects.language("fr_fr").order_by_json_path("name")
         for i, fruit in enumerate(fruits):
             self.assertEqual(fruit.name, expected_order[i])
@@ -219,6 +232,7 @@ class TranslationOrderingTest(TestCase):
             "Muz",
             "Portakal",
         ]
+        activate("tr-tr")
         fruits = Fruit.objects.language("tr_tr").order_by_json_path("name")
         for i, fruit in enumerate(fruits):
             self.assertEqual(fruit.name, expected_order[i])
@@ -234,6 +248,7 @@ class TranslationOrderingTest(TestCase):
             "Banana",
             "Apple",
         ]
+        activate("en-us")
         fruits = Fruit.objects.order_by_json_path(
             "name", language_code="en_us", order="desc"
         )
@@ -250,6 +265,7 @@ class TranslationOrderingTest(TestCase):
             "Citron",
             "Banane",
         ]
+        activate("fr-fr")
         fruits = Fruit.objects.order_by_json_path(
             "name", language_code="fr_fr", order="desc"
         )
@@ -266,6 +282,7 @@ class TranslationOrderingTest(TestCase):
             "Çilek",
             "Armut",
         ]
+        activate("tr-tr")
         fruits = Fruit.objects.order_by_json_path(
             "name", language_code="tr_tr", order="desc"
         )
