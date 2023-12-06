@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.db import models
 from django.db.models import JSONField, options
 
@@ -112,10 +113,39 @@ class TranslationModel(models.Model, TranslationMixin):
         return {}
 
     def save(self, *args, **kwargs):
-        language_code = self._language_code
-        self.reset_language()
+        """
+        Populate translations properly when saving the object.
+
+        LANGUAGE != DEFAULT
+        - When creating a new object, the translatable field will be populated along with translations key.
+        - If the object already exists, then only translations key will be updated.
+
+        LANGUAGE = DEFAULT
+        - When creating a new object, the translatable field will be populated but not translations field.
+        - If the object already exists, then only translatable field will be updated.
+        - If the language is set to != DEFAULT, when updating the translations field will be populated, but not the
+          translatable field.
+        """
+        language_code = self.get_language_code()
         if self.translations == "":
             self.translations = None
+        self.reset_language()
+        if not self.is_default_language(language_code):
+            old_record = None
+            if self.pk:
+                model_klass = apps.get_model(app_label=self._meta.app_label, model_name=self.get_class_name())
+                old_record = model_klass.objects.get(id=self.pk)
+            for translatable_field in self._meta.translatable_fields:
+                new_field_value = getattr(self, translatable_field)
+                self.translate(language_code, **{translatable_field: new_field_value})
+                if not old_record:
+                    continue
+                # _translated needs to be set as None in order to be able to setattr.
+                self._translated = None
+                old_field_value = getattr(old_record, translatable_field)
+                if old_field_value != new_field_value:
+                    # The regular field should be kept the same as before. Only translations should be updated.
+                    setattr(self, translatable_field, old_field_value)
         super().save(*args, **kwargs)
         self.language(language_code)
 
