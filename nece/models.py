@@ -1,4 +1,3 @@
-from django.apps import apps
 from django.db import models
 from django.db.models import JSONField, options
 
@@ -133,8 +132,7 @@ class TranslationModel(models.Model, TranslationMixin):
         if not self.is_default_language(language_code):
             old_record = None
             if self.pk:
-                model_klass = apps.get_model(app_label=self._meta.app_label, model_name=self.get_class_name())
-                old_record = model_klass.objects.get(id=self.pk)
+                old_record = self.__class__.objects.get(id=self.pk)
             for translatable_field in self._meta.translatable_fields:
                 new_field_value = getattr(self, translatable_field)
                 self.translate(language_code, **{translatable_field: new_field_value})
