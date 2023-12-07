@@ -128,7 +128,6 @@ class TranslationModel(models.Model, TranslationMixin):
         language_code = self.get_language_code()
         if self.translations == "":
             self.translations = None
-        self.reset_language()
         if not self.is_default_language(language_code):
             old_record = None
             if self.pk:
