@@ -76,7 +76,7 @@ class TranslationModel(models.Model, TranslationMixin):
         fields = self._meta.translatable_fields
         self.default_language = Language(**{i: getattr(self, i, None) for i in fields})
         # Translation fields
-        if self.translations:
+        if self.translations and isinstance(self.translations, dict):
             for code in language_codes:
                 translations = self.translations.get(code)
                 if translations:
