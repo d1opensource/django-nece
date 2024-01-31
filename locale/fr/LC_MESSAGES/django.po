@@ -1,21 +1,22 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: nece-test-2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-08-02 06:26-0400\n"
-"PO-Revision-Date: 2023-02-17 12:17-0500\n"
+"PO-Revision-Date: 2024-01-31 21:05\n"
 "Last-Translator: \n"
-"Language-Team: \n"
+"Language-Team: French, Canada\n"
 "Language: fr_CA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.1.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Crowdin-Project: nece-test-2\n"
+"X-Crowdin-Project-ID: 644894\n"
+"X-Crowdin-Language: fr-CA\n"
+"X-Crowdin-File: /localise_test/locale/fr/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 14\n"
 
 #: accounts/models.py:514
 msgid "Invalid image file content."
@@ -26,15 +27,12 @@ msgid "Cannot add sibling to a missing S3 file."
 msgstr ""
 
 #: accounts/models.py:1011
-msgid ""
-"If rules are applied to dataset or collection it cannot be used for investor "
-"portal."
+msgid "If rules are applied to dataset or collection it cannot be used for investor portal."
 msgstr ""
 
 #: accounts/serializers.py:445
 #, python-brace-format
-msgid ""
-"The provided photo is larger than {settings.PROFILE_IMAGE_MAX_SIZE_IN_MB}MB."
+msgid "The provided photo is larger than {settings.PROFILE_IMAGE_MAX_SIZE_IN_MB}MB."
 msgstr ""
 
 #: accounts/serializers.py:452
@@ -54,18 +52,16 @@ msgid "The source user doesn't have any UI settings to copy."
 msgstr "L'utilisateur source n'a pas de réglages d'interface à copier."
 
 #: accounts/views.py:585
-#, fuzzy
 #| msgid "User doesn't have any role assigned to their profile."
 msgid "Profile does not have a contact associated. Is it an external profile?"
-msgstr "L'utilisateur n'a aucun rôle assigné à son profile."
+msgstr ""
 
 #: applets/templates/factor_analysis/base.html:57
 #: applets/templates/staff/base.html:121
 #: applets/templates/staff/factor_analysis_upload.html:5
-#, fuzzy
 #| msgid "Tax Lot Analytics"
 msgid "Factor Analysis"
-msgstr "Métriques sur les lots"
+msgstr ""
 
 #: applets/templates/fees/base.html:21 applets/templates/staff/base.html:127
 msgid "Billing"
@@ -73,10 +69,9 @@ msgstr ""
 
 #: applets/templates/fees/base.html:26
 #: applets/templates/fees/bill_group_list.html:6
-#, fuzzy
 #| msgid "Age Group"
 msgid "Bill Groups"
-msgstr "Groupe d’âge"
+msgstr ""
 
 #: applets/templates/fees/base.html:29
 msgid "Fee Runs"
@@ -89,3 +84,4 @@ msgstr ""
 #: applets/templates/fees/bill_group_detail.html:31
 msgid "Record Details"
 msgstr ""
+
