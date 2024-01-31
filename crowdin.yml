@@ -1,2 +1,5 @@
 bundles:
   - 2
+files:
+  - source: /locale/fr/LC_MESSAGES/django.po
+    translation: /locale/%two_letters_code%/LC_MESSAGES/django.po
