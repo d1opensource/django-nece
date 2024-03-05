@@ -76,16 +76,25 @@ class TranslationModel(models.Model, TranslationMixin):
         fields = self._meta.translatable_fields
         self.default_language = Language(**{i: getattr(self, i, None) for i in fields})
         # Translation fields
-        if self.translations:
-            for code in language_codes:
-                translations = self.translations.get(code)
-                if translations:
-                    self._language_code = code
-                    trans = self.populate_translations(translations)
-                    self._translated = Language(**trans)
-                    break
+        for instance in self.collect_related_translatable_instances():
+            if instance and isinstance(instance.translations, dict):
+                for code in language_codes:
+                    translations = instance.translations.get(code)
+                    if translations:
+                        instance._language_code = code
+                        trans = instance.populate_translations(translations)
+                        instance._translated = Language(**trans)
+                        break
 
         return self
+
+    def collect_related_translatable_instances(self):
+        translatable_instances = [self]
+        for field in self._meta.fields:
+            if isinstance(field, models.OneToOneField | models.ForeignKey) and issubclass(field.related_model, TranslationModel):
+                translatable_instance = getattr(self, field.name)
+                translatable_instances.append(translatable_instance)
+        return translatable_instances
 
     def language_or_none(self, language_code):
         language_code = self.get_language_key(language_code)
