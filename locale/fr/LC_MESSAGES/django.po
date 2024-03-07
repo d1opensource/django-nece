@@ -1,0 +1,72 @@
+msgid ""
+msgstr ""
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: test\n"
+"Language: fr\n"
+
+#: accounts/models.py:514
+msgid "Invalid image file content."
+msgstr "Contenu du fichier image non valide."
+
+#: accounts/models.py:591
+msgid "Cannot add sibling to a missing S3 file."
+msgstr "Impossible d'ajouter un frère ou une sœur à un fichier S3 manquant."
+
+#: accounts/models.py:1011
+msgid "If rules are applied to dataset or collection it cannot be used for investor portal."
+msgstr "Si des règles sont appliquées à un ensemble de données ou à une collection, elles ne peuvent pas être utilisées pour le portail des investisseurs."
+
+#: accounts/serializers.py:445
+msgid "The provided photo is larger than {settings.PROFILE_IMAGE_MAX_SIZE_IN_MB}MB."
+msgstr "La photo fournie fait plus de {settings.PROFILE_IMAGE_MAX_SIZE_IN_MB} Mo."
+
+#: accounts/serializers.py:452
+msgid "Invalid file content type."
+msgstr "Type de contenu de fichier invalide."
+
+#: accounts/serializers.py:459
+msgid "Missing file extension."
+msgstr "Extension de fichier manquante."
+
+#: accounts/serializers.py:461
+msgid "Invalid file extension."
+msgstr "Extension de fichier invalide."
+
+#: accounts/serializers.py:747
+msgid "The source user doesn't have any UI settings to copy."
+msgstr "L'utilisateur source n'a pas de réglages d'interface à copier."
+
+#: accounts/views.py:585
+msgid "Profile does not have a contact associated. Is it an external profile?"
+msgstr "L'utilisateur n'a aucun rôle assigné à son profile."
+
+#: applets/templates/factor_analysis/base.html:57
+#: applets/templates/staff/base.html:121
+#: applets/templates/staff/factor_analysis_upload.html:5
+msgid "Factor Analysis"
+msgstr "Métriques sur les lots"
+
+#: applets/templates/fees/base.html:21 applets/templates/staff/base.html:127
+msgid "Billing"
+msgstr "Facturation"
+
+#: applets/templates/fees/base.html:26
+#: applets/templates/fees/bill_group_list.html:6
+msgid "Bill Groups"
+msgstr "Groupe d’âge"
+
+#: applets/templates/fees/base.html:29
+msgid "Fee Runs"
+msgstr "Courses payantes"
+
+#: applets/templates/fees/bill_group_detail.html:14
+msgid "Group Details"
+msgstr "Détails du groupe"
+
+#: applets/templates/fees/bill_group_detail.html:31
+msgid "Record Details"
+msgstr "Détails de l'enregistrement 23"
+
